@@ -1,0 +1,23 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+mypy = "*"
+autopep8 = "*"
+flake8 = "*"
+pytest = "*"
+bandit = "*"
+pydocstyle = "*"
+pathlib2 = "*"
+ipython = "*"
+jupyter = "*"
+
+[packages]
+toolz = "*"
+pyarrow = "*"
+pyspark = "*"
+
+[requires]
+python_version = "3.7"
