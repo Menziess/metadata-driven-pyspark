@@ -1,6 +1,6 @@
 .EXPORT_ALL_VARIABLES:
 
-WHEEL_NAME=python_package-0.0.0-py3-none-any.whl
+WHEEL_NAME=metadata_driven-0.0.0-py3-none-any.whl
 CLUSTER_ID=0109-142921-marks646
 
 help:

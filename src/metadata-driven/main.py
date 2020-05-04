@@ -5,7 +5,7 @@ from argparse import ArgumentParser, Namespace
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import lit
 
-from python_package.utils.databricks import spark
+from metadata_driven.utils.databricks import spark
 
 
 def get_args() -> Namespace:

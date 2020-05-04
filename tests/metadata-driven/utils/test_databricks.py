@@ -3,7 +3,7 @@
 from pyspark.sql import SparkSession
 from pytest import mark
 
-from python_package.utils.databricks import get_dbutils, get_spark
+from metadata_driven.utils.databricks import get_dbutils, get_spark
 
 try:
     # pyspark.dbutils only exists when databricks-connect is installed

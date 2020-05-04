@@ -3,7 +3,7 @@
 from pytest import fixture
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql import types as st
-from python_package.utils.databricks import spark as package_spark
+from metadata_driven.utils.databricks import spark as package_spark
 
 
 @fixture

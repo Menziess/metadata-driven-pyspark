@@ -1,6 +1,6 @@
 """Test main module."""
 
-from python_package.main import main
+from metadata_driven.main import main
 
 
 def test_main():

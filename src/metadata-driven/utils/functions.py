@@ -7,7 +7,7 @@ from pyspark.sql import Column, DataFrame
 from pyspark.sql import functions as sf
 from pyspark.sql import types as st
 
-from python_package.utils.databricks import spark
+from metadata_driven.utils.databricks import spark
 
 
 def get_processdate_default_today(
