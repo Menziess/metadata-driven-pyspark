@@ -18,6 +18,7 @@ jupyter = "*"
 toolz = "*"
 pyarrow = "*"
 pyspark = "*"
+pymonad = "*"
 
 [requires]
 python_version = "3.7"

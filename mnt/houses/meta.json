@@ -1,0 +1,16 @@
+{
+  "input": {
+    "format": "json"
+  },
+  "output": {
+    "format": "parquet"
+  },
+  "transformations": [
+    {
+      "fieldname": "id"
+    },
+    {
+      "fieldname": "city"
+    }
+  ]
+}
