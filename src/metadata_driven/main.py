@@ -1,13 +1,14 @@
 """Just an example module."""
 
 from argparse import ArgumentParser, Namespace
-from glom import glom
+from contextlib import contextmanager
+from typing import Callable
 
 from pyspark.sql import DataFrame
-from pyspark.sql.functions import lit
 from pyspark.sql.types import StructType
+from toolz import curry, pipe
 
-from metadata_driven.utils.databricks import spark, load_json_dbfs
+from metadata_driven.utils.databricks import load_json_dbfs, spark
 
 
 def get_args() -> Namespace:
@@ -19,39 +20,53 @@ def get_args() -> Namespace:
     return parser.parse_args()
 
 
-def read(metajsonpath: str) -> DataFrame:
-    """Read folder containing metadata."""
-    meta = load_json_dbfs(metajsonpath)
-    format = glom(meta, 'input.format', default='text')
-    schema = glom(meta, 'input.schema', default=None)
-    # fields = glom(meta, 'fields', default=[])
-    path = glom(meta, 'input.path')
-    return (
-        spark
-        .read
-        .load(
-            path=path,
-            format=format,
-            schema=StructType.fromJson(schema) if schema else schema,
-            **glom(meta, 'input.options', default={})
-        )
+def read(meta: dict) -> DataFrame:
+    """Read data using metadata."""
+    schema = meta.get('schema', None)
+    return spark.read.load(
+        path=meta.get('path'),
+        format=meta.get('format', 'text'),
+        schema=StructType.fromJson(schema) if schema else schema,
+        **meta.get('options', {})
     )
 
 
-def main(metadatajsonpath: str) -> DataFrame:
-    """Show some data.
+@curry
+def write(meta: dict, df: DataFrame) -> None:
+    """Write data using metadata."""
+    df.write.save(
+        path=meta.get('path'),
+        format=meta.get('format', 'parquet'),
+        mode=meta.get('mode', 'error'),
+        partitionBy=meta.get('partitionBy', None),
+        **meta.get('options', {})
+    )
 
-    This function is merely proof that we can read a particular filepath
-    locally, in a DevOps pipeline, and on Databricks.
-    """
-    return read(metadatajsonpath)
+
+@contextmanager
+def job(metadatajsonpath: str, *transformations: Callable) -> DataFrame:
+    """Load data, inspect it, then write it."""
+    meta = load_json_dbfs(metadatajsonpath)
+    df = pipe(
+        read(meta['input']),
+        *transformations
+    )
+    yield df
+    write(meta['output'], df)
 
 
 if __name__ == "__main__":
     args = get_args()
 
     try:
-        print(f"Read data using metadata: {args.metadatajsonpath}")
-        main(args.metadatajsonpath).show()
+        print(f"Processing using metadata: {args.metadatajsonpath}")
+
+        def with_lol_col(df):
+            """Add different column."""
+            return df.withColumn('lol', df['city'])
+
+        with job(args.metadatajsonpath, with_lol_col) as df:
+            df.show()
+
     except KeyboardInterrupt:
         print("\nYou stopped the program.")

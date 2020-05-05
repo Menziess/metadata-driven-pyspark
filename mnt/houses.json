@@ -2,6 +2,11 @@
   "input": {
     "format": "csv",
     "path": "mnt/houses/**/*.csv",
+    "options": {
+      "basePath": "mnt/houses/",
+      "header": true,
+      "sep": ","
+    },
     "schema": {
       "type": "struct",
       "fields": [
@@ -18,15 +23,14 @@
           "metadata": {}
         }
       ]
-    },
-    "options": {
-      "basePath": "mnt/houses/",
-      "header": true,
-      "sep": ","
     }
   },
   "output": {
-    "format": "parquet"
+    "format": "parquet",
+    "path": "mnt/test/",
+    "mode": "overwrite",
+    "partitionBy": "lol",
+    "options": {}
   },
   "mapping": [
     {

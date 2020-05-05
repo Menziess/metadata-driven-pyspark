@@ -57,7 +57,7 @@ def get_dbutils() -> Any:
         try:
             import IPython
             dbutils = IPython.get_ipython().user_ns["dbutils"]
-        except (AttributeError, ModuleNotFoundError):
+        except (AttributeError, ModuleNotFoundError, KeyError):
             print("databricks-connect is not installed")
             return None
     return dbutils
