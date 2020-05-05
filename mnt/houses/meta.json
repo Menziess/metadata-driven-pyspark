@@ -1,6 +1,10 @@
 {
   "input": {
-    "format": "json"
+    "format": "csv",
+    "options": {
+      "header": true,
+      "sep": ","
+    }
   },
   "output": {
     "format": "parquet"
@@ -10,7 +14,8 @@
       "fieldname": "id"
     },
     {
-      "fieldname": "city"
+      "fieldname": "city",
+      "partition": true
     }
   ]
 }

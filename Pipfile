@@ -19,6 +19,7 @@ toolz = "*"
 pyarrow = "*"
 pyspark = "*"
 pymonad = "*"
+glom = "*"
 
 [requires]
 python_version = "3.7"
