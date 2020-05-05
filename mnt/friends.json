@@ -1,0 +1,20 @@
+{
+  "input": {
+    "format": "json",
+    "path": "../mnt/friends/"
+  },
+  "output": {
+    "format": "parquet"
+  },
+  "transformations": [
+    {
+      "fieldname": "id"
+    },
+    {
+      "fieldname": "firstname"
+    },
+    {
+      "lastname": "firstname"
+    }
+  ]
+}

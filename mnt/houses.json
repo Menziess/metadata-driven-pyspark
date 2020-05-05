@@ -1,7 +1,9 @@
 {
   "input": {
     "format": "csv",
+    "path": "../mnt/houses/**/*.csv",
     "options": {
+      "basePath": "../mnt/houses/",
       "header": true,
       "sep": ","
     }
@@ -14,8 +16,7 @@
       "fieldname": "id"
     },
     {
-      "fieldname": "city",
-      "partition": true
+      "fieldname": "city"
     }
   ]
 }
