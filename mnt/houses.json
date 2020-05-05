@@ -2,6 +2,23 @@
   "input": {
     "format": "csv",
     "path": "../mnt/houses/**/*.csv",
+    "schema": {
+      "type": "struct",
+      "fields": [
+        {
+          "name": "id",
+          "type": "long",
+          "nullable": true,
+          "metadata": {}
+        },
+        {
+          "name": "city",
+          "type": "string",
+          "nullable": true,
+          "metadata": {}
+        }
+      ]
+    },
     "options": {
       "basePath": "../mnt/houses/",
       "header": true,
@@ -11,7 +28,7 @@
   "output": {
     "format": "parquet"
   },
-  "transformations": [
+  "mapping": [
     {
       "fieldname": "id"
     },
