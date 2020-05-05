@@ -1,49 +1,9 @@
 """Test common useful transformations."""
 
-from datetime import date
-from datetime import datetime as dt
-
 from pyspark.sql import DataFrame, SparkSession
 
-from metadata_driven.utils.transformations import (
-    add_business_date_year_month_day_fields, dedupe, filter_on_processDate,
-    flatten_structs, rename_columns, replace_special_characters)
-
-
-def test_replace_special_characters(spark: SparkSession) -> None:
-    """Test whether this function removes special characters."""
-    test_df = spark.createDataFrame([
-        ("hello there!", '!@#$%"^&*()')
-    ], ['text1', 'text2'])
-    assert replace_special_characters(test_df).first().text1 == 'hello there!'
-    assert replace_special_characters(test_df).first().text2 == '!@#$%^&*()'
-
-
-def test_add_business_date_year_month_day_fields(spark: SparkSession) -> None:
-    """Test whether columns are correctly added."""
-    test_df = spark.createDataFrame([
-        (0, dt(1991, 5, 7, 1, 2, 3))
-    ], ['id', 'timestamp'])
-    df = add_business_date_year_month_day_fields(test_df, 'timestamp')
-    row = df.first()
-    assert df.columns == ['id', 'timestamp', 'business_date',
-                          'Year', 'Month', 'Day']
-    assert row.business_date == date(1991, 5, 7)
-    assert row.Year == 1991
-    assert row.Month == 5
-    assert row.Day == 7
-
-
-def test_filter_on_processDate(spark: SparkSession) -> None:
-    """Test whether selection based on process_date works."""
-    d1 = dt(1991, 5, 7, 1, 2, 3)
-    d2 = dt(1991, 5, 9, 4, 5, 6)
-    test_df = spark.createDataFrame([
-        (1, d1),
-        (2, d2),
-    ], ['id', 'process_date'])
-    assert filter_on_processDate(test_df, d1).first().id == 1
-    assert filter_on_processDate(test_df, d2).first().id == 2
+from metadata_driven.utils.transformations import (dedupe, flatten_structs,
+                                                   rename_columns)
 
 
 def test_dedupe(test_df: DataFrame, spark: SparkSession) -> None:

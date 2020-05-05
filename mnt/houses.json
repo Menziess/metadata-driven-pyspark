@@ -1,7 +1,7 @@
 {
   "input": {
     "format": "csv",
-    "path": "../mnt/houses/**/*.csv",
+    "path": "mnt/houses/**/*.csv",
     "schema": {
       "type": "struct",
       "fields": [
@@ -20,7 +20,7 @@
       ]
     },
     "options": {
-      "basePath": "../mnt/houses/",
+      "basePath": "mnt/houses/",
       "header": true,
       "sep": ","
     }

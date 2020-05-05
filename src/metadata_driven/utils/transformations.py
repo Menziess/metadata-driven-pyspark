@@ -1,57 +1,7 @@
-"""Test common useful transformations."""
-
-from datetime import datetime
+"""Common useful transformations."""
 
 from pyspark.sql import DataFrame, Window
 from pyspark.sql import functions as sf
-
-# deleted: change_column_names
-
-# deleted: drop_column_names
-
-
-def replace_special_characters(df: DataFrame) -> DataFrame:
-    """Remove special characters in entire DataFrame.
-
-    @TODO: This function merely removes double quotes, the name of the
-    function should reflect this, or this function should be removed.
-    """
-    for col_name in df.columns:
-        df = df.withColumn(
-            col_name,
-            sf.when(sf.col(col_name).cast("int").isNull(),
-                    sf.regexp_replace(sf.col(col_name), '"', ''))
-            .otherwise(sf.col(col_name)))
-    return df
-
-
-def add_business_date_year_month_day_fields(
-    df: DataFrame,
-    businessDateField: str
-) -> DataFrame:
-    """Add four columns, including `business_date`, `Year`, 'Month`, `Day`."""
-    return (
-        df
-        .withColumn("business_date",
-                    sf.to_date(sf.col(businessDateField), "yyyyMMdd"))
-        .withColumn("Year", sf.year(sf.col("business_date")))
-        .withColumn("Month", sf.month(sf.col("business_date")))
-        .withColumn("Day", sf.dayofmonth(sf.col("business_date")))
-    )
-
-
-def filter_on_processDate(df: DataFrame, process_date: datetime) -> DataFrame:
-    """Handle late arriving facts.
-
-    To handle late arriving facts, on loading a DF made up of all business
-    dates. This function pulls out the rows just corresponding to the
-    process date specified preventing double processing of data on
-    old process dates.
-    """
-    f_date = sf.date_format(sf.col("process_date"), "yyyy/MM/dd")
-    return df.filter(
-        f_date == process_date.strftime('%Y/%m/%d')
-    ).drop("process_date")
 
 
 def dedupe(

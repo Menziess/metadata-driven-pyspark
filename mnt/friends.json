@@ -1,7 +1,7 @@
 {
   "input": {
     "format": "json",
-    "path": "../mnt/friends/"
+    "path": "mnt/friends/"
   },
   "output": {
     "format": "parquet"

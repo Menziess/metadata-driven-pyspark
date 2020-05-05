@@ -1,14 +1,27 @@
 """Support usage of databricks-connect."""
 
+from .helpers import abs_to_rel, load_json
+
 from functools import wraps
 from itertools import islice
 from typing import Any
+from os import path
 
 from pyspark.sql import SparkSession
+from toolz import compose
 
 INVALID_MOUNT_ERR = (
     "This is not a valid mount path, see help(conn.databricks.create_mount)"
 )
+
+
+def local_file_api_path(filepath: str) -> str:
+    """Convert `/home` to `dbfs/home` if exists."""
+    dbfsfilepath = path.join('dbfs', abs_to_rel(filepath))
+    return dbfsfilepath if path.exists(dbfsfilepath) else filepath
+
+
+load_json_dbfs = compose(load_json, local_file_api_path)
 
 
 def get_spark() -> SparkSession:
