@@ -32,7 +32,7 @@
     "partitionBy": "lol",
     "options": {}
   },
-  "mapping": [
+  "transformations": [
     {
       "fieldname": "id"
     },

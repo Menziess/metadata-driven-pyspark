@@ -4,7 +4,9 @@
     "path": "mnt/friends/"
   },
   "output": {
-    "format": "parquet"
+    "path": "mnt/test/",
+    "format": "parquet",
+    "partitionBy": "lol"
   },
   "transformations": [
     {
