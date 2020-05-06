@@ -26,7 +26,7 @@
     }
   },
   "output": {
-    "format": "parquet",
+    "format": "csv",
     "path": "mnt/test/",
     "mode": "overwrite",
     "partitionBy": "lol",
@@ -35,7 +35,7 @@
   "transformations": [
     {
       "col": "lol",
-      "value": "col('city')"
+      "value": "lit('wtf dude')"
     }
   ]
 }
