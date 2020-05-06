@@ -34,10 +34,8 @@
   },
   "transformations": [
     {
-      "fieldname": "id"
-    },
-    {
-      "fieldname": "city"
+      "col": "lol",
+      "value": "col('city')"
     }
   ]
 }

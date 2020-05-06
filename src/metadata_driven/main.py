@@ -2,9 +2,10 @@
 
 from argparse import ArgumentParser, Namespace
 from contextlib import contextmanager
-from typing import Callable
+from typing import Callable, Iterable
 
 from pyspark.sql import DataFrame
+from pyspark.sql.functions import *
 from pyspark.sql.types import StructType
 from toolz import curry, pipe
 
@@ -43,12 +44,31 @@ def write(meta: dict, df: DataFrame) -> None:
     )
 
 
+def expressions_to_transformations(
+    template_transformations: Iterable[dict]
+) -> Iterable[Callable]:
+    """Convert template expressions to callable functions."""
+
+    def exec_and_return(expression):
+        exec(f"""locals()['x'] = {expression}""")
+        return locals()['x']
+
+    return [
+        lambda df: df.withColumn(
+            transformation['col'],
+            exec_and_return(transformation['value'])
+        )
+        for transformation in template_transformations
+    ]
+
+
 @contextmanager
-def job(metadatajsonpath: str, *transformations: Callable) -> DataFrame:
+def pipeline(metadatajsonpath: str, *transformations: Callable) -> DataFrame:
     """Load data, inspect it, then write it."""
     meta = load_json_dbfs(metadatajsonpath)
     df = pipe(
         read(meta['input']),
+        *expressions_to_transformations(meta['transformations']),
         *transformations
     )
     yield df
@@ -61,12 +81,8 @@ if __name__ == "__main__":
     try:
         print(f"Processing using metadata: {args.metadatajsonpath}")
 
-        def with_lol_col(df):
-            """Add different column."""
-            return df.withColumn('lol', df['city'])
-
-        with job(args.metadatajsonpath, with_lol_col) as df:
-            df.show()
+        with pipeline(args.metadatajsonpath) as result:
+            result.show()
 
     except KeyboardInterrupt:
         print("\nYou stopped the program.")

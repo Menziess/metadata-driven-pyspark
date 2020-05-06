@@ -8,15 +8,5 @@
     "format": "parquet",
     "partitionBy": "lol"
   },
-  "transformations": [
-    {
-      "fieldname": "id"
-    },
-    {
-      "fieldname": "firstname"
-    },
-    {
-      "lastname": "firstname"
-    }
-  ]
+  "transformations": []
 }
