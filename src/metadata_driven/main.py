@@ -35,7 +35,12 @@ def read(meta: dict) -> DataFrame:
 @curry
 def write(meta: dict, df: DataFrame) -> None:
     """Write data using metadata."""
-    df.write.save(
+    schema = meta.get('schema', None)
+    df_with_schema_applied = spark.createDataFrame(
+        data=df.rdd,
+        schema=StructType.fromJson(schema) if schema else schema
+    )
+    df_with_schema_applied.write.save(
         path=meta.get('path'),
         format=meta.get('format', 'parquet'),
         mode=meta.get('mode', 'error'),

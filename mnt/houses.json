@@ -26,16 +26,39 @@
     }
   },
   "output": {
-    "format": "csv",
+    "format": "json",
     "path": "mnt/test/",
     "mode": "overwrite",
-    "partitionBy": "lol",
-    "options": {}
+    "partitionBy": "city_str_len",
+    "options": {},
+    "schema": {
+      "type": "struct",
+      "fields": [
+        {
+          "name": "id",
+          "type": "long",
+          "nullable": true,
+          "metadata": {}
+        },
+        {
+          "name": "city",
+          "type": "string",
+          "nullable": true,
+          "metadata": {}
+        },
+        {
+          "name": "city_str_len",
+          "type": "string",
+          "nullable": false,
+          "metadata": {}
+        }
+      ]
+    }
   },
   "transformations": [
     {
-      "col": "lol",
-      "value": "lit('wtf dude')"
+      "col": "city_str_len",
+      "value": "length(col('city'))"
     }
   ]
 }
