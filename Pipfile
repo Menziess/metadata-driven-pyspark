@@ -12,14 +12,12 @@ bandit = "*"
 pydocstyle = "*"
 pathlib2 = "*"
 ipython = "*"
-jupyter = "*"
 
 [packages]
 toolz = "*"
 pyarrow = "*"
 pyspark = "*"
 pymonad = "*"
-glom = "*"
 
 [requires]
 python_version = "3.7"
