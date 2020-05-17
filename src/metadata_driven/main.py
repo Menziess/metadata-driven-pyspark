@@ -2,6 +2,7 @@
 
 from argparse import ArgumentParser, Namespace
 from contextlib import contextmanager
+from functools import partial
 from typing import Callable, Iterable
 
 from pyspark.sql import DataFrame
@@ -54,17 +55,17 @@ def expressions_to_transformations(
 ) -> Iterable[Callable]:
     """Convert template expressions to callable functions."""
 
-    def exec_and_return(expression):
-        exec(f"""locals()['x'] = {expression}""")
-        return locals()['x']
+    def exec_and_return(expression, results={}):
+        exec(f"""results['x'] = {expression}""")
+        return results['x']
 
-    return [
-        lambda df: df.withColumn(
-            transformation['col'],
-            exec_and_return(transformation['value'])
-        )
-        for transformation in template_transformations
-    ]
+    return (
+        partial(
+            DataFrame.withColumn,
+            colName=t['col'],
+            col=exec_and_return(t['value']))
+        for t in template_transformations
+    )
 
 
 @contextmanager
