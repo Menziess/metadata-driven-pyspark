@@ -48,7 +48,13 @@
         },
         {
           "name": "city_str_len",
-          "type": "string",
+          "type": "integer",
+          "nullable": false,
+          "metadata": {}
+        },
+        {
+          "name": "city_str_len_plus_one",
+          "type": "integer",
           "nullable": false,
           "metadata": {}
         }
@@ -59,6 +65,10 @@
     {
       "col": "city_str_len",
       "value": "length(col('city'))"
+    },
+    {
+      "col": "city_str_len_plus_one",
+      "value": "col('city_str_len') + 1"
     }
   ]
 }
