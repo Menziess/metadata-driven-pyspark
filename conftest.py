@@ -4,12 +4,27 @@ from pytest import fixture
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql import types as st
 from metadata_driven.utils.databricks import spark as package_spark
+from metadata_driven.main import load_json_dbfs
+
+METADATAJSONPATH = 'mnt/houses.json'
 
 
 @fixture
 def spark() -> SparkSession:
     """Return SparkSession."""
     return package_spark
+
+
+@fixture
+def metadatajsonpath() -> str:
+    """Return metadata filepath."""
+    return METADATAJSONPATH
+
+
+@fixture
+def meta() -> dict:
+    """Return some metadata."""
+    return load_json_dbfs(METADATAJSONPATH)
 
 
 @fixture
