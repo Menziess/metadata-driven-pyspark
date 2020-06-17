@@ -35,3 +35,8 @@
 1. After implementing your feature, run the tests again:
 
         make lint && make test
+
+
+## TODO
+
+1. Install `jsonschema` for proper template validation.

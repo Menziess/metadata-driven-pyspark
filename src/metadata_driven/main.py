@@ -24,9 +24,13 @@ def get_args() -> Namespace:
 
 def read(meta: dict) -> DataFrame:
     """Read data using metadata."""
+    if not isinstance(meta, dict):
+        raise ValueError('Metadata must be of type dict.')
+    if not meta.get('path'):
+        raise KeyError('Metadata is missing key `path`.')
     schema = meta.get('schema', None)
     return spark.read.load(
-        path=meta.get('path'),
+        path=meta['path'],
         format=meta.get('format', 'text'),
         schema=StructType.fromJson(schema) if schema else schema,
         **meta.get('options', {})
