@@ -2,8 +2,8 @@
 
 from pytest import raises
 from pyspark.sql import Row
-
-from metadata_driven.main import load_json_dbfs, read
+from toolz import pipe
+from metadata_driven.main import load_json_dbfs, read, write
 
 
 def test_load_json_dbfs(metadatajsonpath) -> None:
@@ -16,7 +16,7 @@ def test_load_json_dbfs(metadatajsonpath) -> None:
     ]
 
 
-def test_read(meta):
+def test_read(meta: dict) -> None:
     """Test reading data using metadata."""
     with raises(KeyError):
         read(meta)
@@ -30,3 +30,23 @@ def test_read(meta):
     ]
 
     assert list(df.groupBy('city').count().toLocalIterator()) == expected
+
+
+def test_write(meta: dict) -> None:
+    """Test whether data can be written using metadata."""
+    from shutil import rmtree
+
+    # Read some data
+    test_metadata = {
+        "format": "csv",
+        "path": "mnt/test/",
+        "mode": "overwrite"
+    }
+    df = read(meta['input'])
+
+    # Write and assert data existence
+    pipe(df, write(test_metadata))
+    assert read(test_metadata).exceptAll(df).count() == 0
+
+    # Cleanup
+    rmtree(test_metadata['path'])
