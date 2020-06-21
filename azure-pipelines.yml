@@ -40,6 +40,12 @@ stages:
               testResultsFiles: "junit/*"
               testRunTitle: "Python $(python.version)"
 
+          - task: PublishCodeCoverageResults@1
+            displayName: "Publish Coverage Results junit/*"
+            inputs:
+              summaryFileLocation: "junit/coverage.xml"
+              failIfCoverageEmpty: true
+
   - stage: Build
     dependsOn: Test
     jobs:
