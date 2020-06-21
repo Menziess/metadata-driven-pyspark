@@ -12,6 +12,7 @@ bandit = "*"
 pydocstyle = "*"
 pathlib2 = "*"
 ipython = "*"
+coverage = "*"
 
 [packages]
 toolz = "*"

@@ -15,8 +15,9 @@ dev:
 	python setup.py develop
 
 test: dev
-	pytest --doctest-modules --junitxml=junit/test-results.xml
+	coverage run --source=src -m pytest --doctest-modules --junitxml=junit/test-results.xml
 	bandit -r src -f xml -o junit/security.xml || true
+	coverage xml -o junit/coverage.xml
 
 build: clean
 	pip install wheel
