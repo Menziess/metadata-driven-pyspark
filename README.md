@@ -2,6 +2,12 @@
 
 [![Build Status](https://dev.azure.com/Menziess/data-processing/_apis/build/status/Menziess.metadata-driven-pyspark?branchName=master)](https://dev.azure.com/Menziess/data-processing/_build/latest?definitionId=18&branchName=master)
 
+A package that can be called with metadata in json format.
+
+Imagine running a Databricks job from DataFactory. The Databricks job is just a pure function that accepts the details of the job from DataFactory (stored in git of course).
+
+The complexity of the processing can be expanded upon, but the package will force a consistent, and hopefully tested way of reading, transforming, joining, aggregating, and writing data.
+
 ## Development
 
 1. Clone the repository.
