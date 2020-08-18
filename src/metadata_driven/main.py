@@ -6,7 +6,7 @@ from functools import partial
 from typing import Callable, Iterable
 
 from pyspark.sql import DataFrame
-from pyspark.sql.functions import *
+from pyspark.sql.functions import *  # noqa: F401, F403
 from pyspark.sql.types import StructType
 from toolz import curry, pipe
 
@@ -17,15 +17,13 @@ def get_args() -> Namespace:
     """Parse args."""
     parser = ArgumentParser(__file__)
     parser.add_argument("metadatajsonpath", type=str)
-    parser.add_argument("--added_column", type=str,
-                        default='🐌🚬😁🤦‍♂️', required=False)
+    # parser.add_argument("--added_column", type=str,
+    # default = '🐌🚬😁🤦‍♂️', required = False)
     return parser.parse_args()
 
 
-def read(meta: dict) -> DataFrame:
-    """Read data using metadata."""
-    if not isinstance(meta, dict):
-        raise ValueError('Metadata must be of type dict.')
+def read_single(meta) -> DataFrame:
+    """Read one piece of data using metadata."""
     if not meta.get('path'):
         raise KeyError('Metadata is missing key `path`.')
     schema = meta.get('schema', None)
@@ -35,6 +33,15 @@ def read(meta: dict) -> DataFrame:
         schema=StructType.fromJson(schema) if schema else schema,
         **meta.get('options', {})
     )
+
+
+def read(meta: dict) -> DataFrame:
+    """Read data using metadata."""
+    if isinstance(meta, dict):
+        return read_single(meta)
+    if isinstance(meta, list):
+        raise NotImplementedError("TODO")
+    raise ValueError('Metadata must be of type dict or list.')
 
 
 @curry
