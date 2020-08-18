@@ -8,6 +8,30 @@ Imagine running a Databricks job from DataFactory. The Databricks job is just a 
 
 The complexity of the processing can be expanded upon, but the package will force a consistent, and hopefully tested way of reading, transforming, joining, aggregating, and writing data.
 
+So, for example:
+
+```json
+[
+        {
+                "input": ["a"],
+                "output": {"path": "b"},
+                "transformations": []
+        },
+        {
+                "input": ["b", "c"],
+                "output": {"path": "d"},
+                "transformations": []
+        },
+        {
+                "input": ["b", "c"],
+                "output": {"path": "e"},
+                "transformations": []
+        }
+]
+```
+
+This metadata could be passed to the package, which would generate datasets "d" and "e", using "a", "b", and "c".
+
 ## Development
 
 1. Clone the repository.
