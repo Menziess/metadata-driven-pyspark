@@ -38,9 +38,9 @@ def read_single(meta) -> DataFrame:
 def read(meta: dict) -> DataFrame:
     """Read data using metadata."""
     if isinstance(meta, dict):
-        return read_single(meta)
+        return {'df': read_single(meta)}
     if isinstance(meta, list):
-        raise NotImplementedError("TODO")
+        return {x['name']: read_single(x) for x in meta}
     raise ValueError('Metadata must be of type dict or list.')
 
 
@@ -75,6 +75,11 @@ def expressions_to_transformations(
             DataFrame.withColumn,
             colName=t['col'],
             col=exec_and_return(t['value']))
+        if 'col' in t
+        else partial(
+            DataFrame.withColumn,
+            colName=t['col'],
+            col=exec_and_return(t['value']))
         for t in template_transformations
     )
 
@@ -83,8 +88,9 @@ def expressions_to_transformations(
 def pipeline(metadatajsonpath: str, *transformations: Callable) -> DataFrame:
     """Load data, inspect it, then write it."""
     meta = load_json_dbfs(metadatajsonpath)
+    dfs = read(meta['input'])
     df = pipe(
-        read(meta['input']),
+        dfs['df'],
         *expressions_to_transformations(meta['transformations']),
         *transformations
     )
