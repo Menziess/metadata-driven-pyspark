@@ -7,6 +7,7 @@ from typing import Callable, Iterable
 from re import sub
 
 from pyspark.sql import DataFrame
+from pyspark.sql.functions import col
 from pyspark.sql.functions import *  # noqa: F401, F403
 from pyspark.sql.types import StructType
 from toolz import curry, pipe
@@ -33,15 +34,15 @@ def read_single(meta) -> DataFrame:
         format=meta.get('format', 'text'),
         schema=StructType.fromJson(schema) if schema else schema,
         **meta.get('options', {})
-    )
+    ).alias(meta['alias'])
 
 
 def read(meta: dict) -> DataFrame:
     """Read data using metadata."""
     if isinstance(meta, dict):
-        return {'df': read_single(meta)}
+        return {meta['alias']: read_single(meta)}
     if isinstance(meta, list):
-        return {x['name']: read_single(x) for x in meta}
+        return {x['alias']: read_single(x) for x in meta}
     raise ValueError('Metadata must be of type dict or list.')
 
 
@@ -79,19 +80,27 @@ def expressions_to_transformations(
             exp
         )
 
+    def process_transformation(t):
+        if 'col' in t:
+            return partial(
+                DataFrame.withColumn,
+                colName=t['col'],
+                col=exec_and_return(t['value']))
+        elif 'join' in t:
+            return partial(
+                DataFrame.join,
+                other=dfs[t['other']],
+                how=t['join'],
+                on=exec_and_return(
+                    join_expression_convert_tablenames(t['on']),
+                    dfs=dfs))
+        elif 'drop' in t:
+            return lambda df: df.drop(col(t['drop']))
+
+        raise Exception('Misformed transformation.')
+
     return (
-        partial(
-            DataFrame.withColumn,
-            colName=t['col'],
-            col=exec_and_return(t['value']))
-        if 'col' in t
-        else partial(
-            DataFrame.join,
-            other=dfs[t['other']],
-            how=t['how'],
-            on=exec_and_return(
-                join_expression_convert_tablenames(t['on']),
-                dfs=dfs))
+        process_transformation(t)
         for t in template_transformations
     )
 
@@ -101,10 +110,10 @@ def pipeline(metadatajsonpath: str, *transformations: Callable) -> DataFrame:
     """Load data, inspect it, then write it."""
     meta = load_json_dbfs(metadatajsonpath)
     dfs = read(meta['input'])
-    expressions = expressions_to_transformations(meta['transformations'], dfs)
     df = pipe(
         dfs[next(iter(dfs))],
-        *expressions
+        *expressions_to_transformations(meta['transformations'], dfs),
+        *transformations
     )
     yield df
     write(meta['output'], df)
