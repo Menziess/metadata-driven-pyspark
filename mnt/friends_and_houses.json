@@ -1,6 +1,11 @@
 {
   "input": [
     {
+      "name": "friends",
+      "format": "json",
+      "path": "mnt/friends/"
+    },
+    {
       "name": "houses",
       "format": "csv",
       "path": "mnt/houses/**/*.csv",
@@ -9,11 +14,6 @@
         "header": true,
         "sep": ","
       }
-    },
-    {
-      "name": "friends",
-      "format": "json",
-      "path": "mnt/friends/"
     }
   ],
   "output": {
@@ -24,10 +24,9 @@
   },
   "transformations": [
     {
-      "join": "inner",
-      "left": "",
-      "right": "",
-      "on": ""
+      "how": "inner",
+      "other": "houses",
+      "on": "friends.id == houses.id"
     }
   ]
 }

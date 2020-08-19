@@ -3,7 +3,7 @@
 from pytest import raises
 from pyspark.sql import Row
 from toolz import pipe
-from metadata_driven.main import load_json_dbfs, read, write
+from metadata_driven.main import load_json_dbfs, read_single, write
 
 
 def test_load_json_dbfs(metadatajsonpath) -> None:
@@ -16,12 +16,12 @@ def test_load_json_dbfs(metadatajsonpath) -> None:
     ]
 
 
-def test_read(meta: dict) -> None:
+def test_read_single(meta: dict) -> None:
     """Test reading data using metadata."""
     with raises(KeyError):
-        read(meta)
+        read_single(meta)
 
-    df = read(meta['input'])
+    df = read_single(meta['input'])
     expected = [
         Row(city='Enkhuizen', count=3),
         Row(city='Lutjebroek', count=1),
@@ -42,11 +42,11 @@ def test_write(meta: dict) -> None:
         "path": "mnt/test/",
         "mode": "overwrite"
     }
-    df = read(meta['input'])
+    df = read_single(meta['input'])
 
     # Write and assert data existence
     pipe(df, write(test_metadata))
-    assert read(test_metadata).exceptAll(df).count() == 0
+    assert read_single(test_metadata).exceptAll(df).count() == 0
 
     # Cleanup
     rmtree(test_metadata['path'])

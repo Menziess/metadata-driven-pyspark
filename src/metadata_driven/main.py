@@ -4,6 +4,7 @@ from argparse import ArgumentParser, Namespace
 from contextlib import contextmanager
 from functools import partial
 from typing import Callable, Iterable
+from re import sub
 
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import *  # noqa: F401, F403
@@ -62,13 +63,21 @@ def write(meta: dict, df: DataFrame) -> None:
 
 
 def expressions_to_transformations(
-    template_transformations: Iterable[dict]
+    template_transformations: Iterable[dict],
+    dfs: dict
 ) -> Iterable[Callable]:
     """Convert template expressions to callable functions."""
 
-    def exec_and_return(expression, results={}):
+    def exec_and_return(expression, dfs=None, results={}):
         exec(f"""results['x'] = {expression}""")
         return results['x']
+
+    def join_expression_convert_tablenames(exp: str):
+        return sub(
+            '([a-zA-Z]+)(?:.[a-zA-Z0-9]+)',
+            lambda x: f"""dfs['{"'].".join(x.group().split("."))}""",
+            exp
+        )
 
     return (
         partial(
@@ -77,9 +86,12 @@ def expressions_to_transformations(
             col=exec_and_return(t['value']))
         if 'col' in t
         else partial(
-            DataFrame.withColumn,
-            colName=t['col'],
-            col=exec_and_return(t['value']))
+            DataFrame.join,
+            other=dfs[t['other']],
+            how=t['how'],
+            on=exec_and_return(
+                join_expression_convert_tablenames(t['on']),
+                dfs=dfs))
         for t in template_transformations
     )
 
@@ -89,10 +101,10 @@ def pipeline(metadatajsonpath: str, *transformations: Callable) -> DataFrame:
     """Load data, inspect it, then write it."""
     meta = load_json_dbfs(metadatajsonpath)
     dfs = read(meta['input'])
+    expressions = expressions_to_transformations(meta['transformations'], dfs)
     df = pipe(
-        dfs['df'],
-        *expressions_to_transformations(meta['transformations']),
-        *transformations
+        dfs[next(iter(dfs))],
+        *expressions
     )
     yield df
     write(meta['output'], df)
