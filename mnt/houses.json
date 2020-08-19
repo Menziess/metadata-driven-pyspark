@@ -1,5 +1,6 @@
 {
   "input": {
+    "alias": "houses",
     "format": "csv",
     "path": "mnt/houses/**/*.csv",
     "options": {

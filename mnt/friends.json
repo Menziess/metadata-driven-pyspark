@@ -1,5 +1,6 @@
 {
   "input": {
+    "alias": "friends",
     "format": "json",
     "path": "mnt/friends/"
   },

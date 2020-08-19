@@ -1,12 +1,12 @@
 {
   "input": [
     {
-      "name": "friends",
+      "alias": "friends",
       "format": "json",
       "path": "mnt/friends/"
     },
     {
-      "name": "houses",
+      "alias": "houses",
       "format": "csv",
       "path": "mnt/houses/**/*.csv",
       "options": {
@@ -24,9 +24,12 @@
   },
   "transformations": [
     {
-      "how": "inner",
+      "join": "inner",
       "other": "houses",
       "on": "friends.id == houses.id"
+    },
+    {
+      "drop": "houses.id"
     }
   ]
 }
