@@ -1,6 +1,6 @@
 # [metadata-driven](/README.md)
 
-[![Build Status](https://dev.azure.com/Menziess/data-processing/_apis/build/status/Menziess.metadata-driven-pyspark?branchName=master)](https://dev.azure.com/Menziess/data-processing/_build/latest?definitionId=18&branchName=master)
+[![Build Status](https://dev.azure.com/Menziess/data-processing/_apis/build/status/metadata-driven-pyspark?branchName=master)](https://dev.azure.com/Menziess/data-processing/_build/latest?definitionId=18&branchName=master)
 
 A package that can be called with metadata in json format.
 
