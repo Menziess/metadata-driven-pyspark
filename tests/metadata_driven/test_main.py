@@ -38,6 +38,7 @@ def test_write(meta: dict) -> None:
 
     # Read some data
     test_metadata = {
+        "alias": "df",
         "format": "csv",
         "path": "mnt/test/",
         "mode": "overwrite"
