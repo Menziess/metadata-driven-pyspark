@@ -36,14 +36,14 @@ stages:
           - task: PublishCodeCoverageResults@1
             displayName: "Publish Coverage Results junit/*"
             inputs:
-              summaryFileLocation: "junit/coverage.xml"
+              summaryFileLocation: "$(System.DefaultWorkingDirectory)/junit/coverage.xml"
               failIfCoverageEmpty: true
 
           - task: PublishTestResults@2
             displayName: "Publish Test Results junit/*"
             condition: always()
             inputs:
-              testResultsFiles: "junit/*"
+              testResultsFiles: "$(System.DefaultWorkingDirectory)/junit/*"
               testRunTitle: "Python $(python.version)"
 
   - stage: Build
