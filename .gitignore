@@ -9,10 +9,6 @@ dist/
 junit/
 *.egg-info
 
-# Local folders
-notebooks/
-src/todo/
-
 # Secrets
 env_file
 *.env
