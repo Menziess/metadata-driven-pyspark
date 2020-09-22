@@ -1,0 +1,38 @@
+[
+  {
+    "input": [
+      {
+        "alias": "friends",
+        "format": "json",
+        "path": "mnt/friends/"
+      },
+      {
+        "alias": "houses",
+        "format": "csv",
+        "path": "mnt/houses/**/*.csv",
+        "options": {
+          "basePath": "mnt/houses/",
+          "header": true,
+          "sep": ","
+        }
+      }
+    ],
+    "output": {
+      "format": "json",
+      "path": "mnt/test/",
+      "mode": "overwrite",
+      "options": {}
+    },
+    "transformations": [
+      {
+        "join": "inner",
+        "other": "houses",
+        "on": "friends.id == houses.id"
+      },
+      {
+        "drop": "houses.id"
+      }
+    ]
+  },
+  {} // Working on this!!!
+]
