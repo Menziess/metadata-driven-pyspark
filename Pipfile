@@ -13,6 +13,7 @@ pydocstyle = "*"
 pathlib2 = "*"
 ipython = "*"
 coverage = "*"
+jupyter = "*"
 
 [packages]
 toolz = "*"
